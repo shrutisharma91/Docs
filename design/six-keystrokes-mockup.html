@@ -1,0 +1,543 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<title>Six Keystrokes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap">
+<style>
+  :root{
+    --bg:#eef1ee; --surface:#fbfcfb; --sunk:#e6ebe7; --rail:#f3f6f4;
+    --line:#d7ded9; --line-2:#c2ccc5;
+    --ink:#14201b; --ink-2:#46544d; --ink-3:#77857e;
+    --accent:#0b6e62; --accent-soft:rgba(11,110,98,.10);
+    --ghost:#93a49c;
+    --warn:#9a5c0c; --warn-bg:rgba(154,92,12,.12);
+    --crit:#a94236; --crit-bg:rgba(169,66,54,.11);
+    --ok:#1c7048; --ok-bg:rgba(28,112,72,.12);
+    --serif:'IBM Plex Serif',Georgia,serif;
+    --sans:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+    --shadow:0 1px 2px rgba(20,32,27,.05),0 10px 30px -14px rgba(20,32,27,.22);
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#0e1513; --surface:#141c19; --sunk:#1a221e; --rail:#121a17;
+    --line:#26302a; --line-2:#35413a;
+    --ink:#e9efeb; --ink-2:#aab8b1; --ink-3:#7d8b84;
+    --accent:#3ddbc6; --accent-soft:rgba(61,219,198,.13);
+    --ghost:#5d6c65;
+    --warn:#e0a44a; --warn-bg:rgba(224,164,74,.14);
+    --crit:#f08d81; --crit-bg:rgba(240,141,129,.14);
+    --ok:#5ede98; --ok-bg:rgba(94,222,152,.13);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 34px -14px rgba(0,0,0,.7);
+  }}
+  :root[data-theme="dark"]{
+    --bg:#0e1513; --surface:#141c19; --sunk:#1a221e; --rail:#121a17;
+    --line:#26302a; --line-2:#35413a;
+    --ink:#e9efeb; --ink-2:#aab8b1; --ink-3:#7d8b84;
+    --accent:#3ddbc6; --accent-soft:rgba(61,219,198,.13);
+    --ghost:#5d6c65;
+    --warn:#e0a44a; --warn-bg:rgba(224,164,74,.14);
+    --crit:#f08d81; --crit-bg:rgba(240,141,129,.14);
+    --ok:#5ede98; --ok-bg:rgba(94,222,152,.13);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 34px -14px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .num{font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+  .page{max-width:1180px;margin:0 auto;padding:34px 20px 70px}
+  .head{margin-bottom:22px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin:0 0 12px}
+  h1{font-family:var(--serif);font-size:clamp(28px,4.4vw,42px);line-height:1.08;letter-spacing:-.02em;margin:0;text-wrap:balance}
+  .sub{color:var(--ink-2);margin:12px 0 0;max-width:64ch;font-size:15.5px}
+
+  /* toggle */
+  .switchbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:22px 0 16px;
+    background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:12px 16px}
+  .seg{display:inline-flex;background:var(--sunk);border:1px solid var(--line);border-radius:4px;padding:3px}
+  .seg button{padding:6px 14px;border-radius:3px;font-weight:600;font-size:13px;color:var(--ink-3)}
+  .seg button.on{background:var(--surface);color:var(--accent);box-shadow:var(--shadow)}
+  .switchbar .note{font-size:13px;color:var(--ink-2);flex:1;min-width:240px}
+  .switchbar .note b{color:var(--ink)}
+
+  /* app frame */
+  .app{background:var(--surface);border:1px solid var(--line);border-radius:5px;box-shadow:var(--shadow);overflow:hidden}
+  .top{display:flex;align-items:center;gap:12px;padding:8px 12px;border-bottom:1px solid var(--line);background:var(--rail);font-size:12.5px}
+  .brand{font-weight:600;color:var(--accent);letter-spacing:.2px}
+  .top .mi{color:var(--ink-3)}
+  .top .mi u{color:var(--crit);text-decoration-thickness:1px;text-underline-offset:2px}
+  .spacer{flex:1}
+  .pill{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line-2);
+    border-radius:5px;padding:3px 9px;color:var(--ink-3);font-size:12px}
+  .pill kbd{margin-left:2px}
+
+  .body{display:grid;grid-template-columns:1fr 168px;min-height:430px}
+  .main{padding:16px 20px;min-width:0}
+  .rail{border-left:1px solid var(--line);background:var(--rail);padding:8px 8px;display:flex;flex-direction:column;gap:3px}
+  .rl{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);padding:6px 6px 4px}
+  .fk{display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:3px;font-size:12px;color:var(--ink-2);text-align:left;width:100%}
+  .fk:hover{background:var(--sunk);color:var(--ink)}
+  .fk.hot{background:var(--accent-soft);color:var(--accent);font-weight:600}
+  .fk .lb{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  kbd{font-family:var(--mono);font-size:10.5px;font-weight:600;background:var(--sunk);
+    border:1px solid var(--line-2);border-bottom-width:2px;border-radius:3px;padding:1px 4px;color:var(--ink);white-space:nowrap}
+  .fk kbd{background:var(--surface)}
+
+  /* voucher head */
+  .vhead{display:flex;align-items:baseline;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:12px}
+  .vhead .t{font-weight:600;font-size:15px}
+  .vhead .d{color:var(--ink-3);font-size:12.5px}
+  .vno{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:3px}
+
+  /* fields */
+  .frow{display:grid;grid-template-columns:150px 1fr;align-items:center;gap:10px;padding:3px 0;position:relative}
+  .frow label{color:var(--ink-3);font-size:13px}
+  .fv{position:relative;display:flex;align-items:center;gap:8px}
+  .fv input{
+    font:inherit;font-size:14px;color:var(--ink);background:transparent;border:0;
+    border-bottom:1px dotted var(--line-2);padding:3px 4px;width:100%;max-width:330px;outline:none;
+  }
+  .fv input.amt{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;max-width:180px}
+  .fv input:focus{background:var(--accent-soft);border-bottom-color:var(--accent)}
+  .preview{font-family:var(--mono);font-size:12.5px;color:var(--accent);white-space:nowrap}
+  .preview.bad{color:var(--crit)}
+
+  /* autocomplete */
+  .ac{position:absolute;top:100%;left:0;z-index:20;background:var(--surface);border:1px solid var(--line-2);
+    border-radius:4px;box-shadow:var(--shadow);min-width:290px;overflow:hidden;margin-top:2px}
+  .ac div{padding:6px 11px;font-size:13px;display:flex;gap:10px;align-items:center}
+  .ac div.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+  .ac .alias{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-left:auto}
+  .ac div.on .alias{color:var(--accent)}
+
+  /* items table */
+  table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13.5px}
+  th{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);
+    text-align:left;padding:6px 8px;border-bottom:1px solid var(--line-2);font-weight:500}
+  th.r,td.r{text-align:right}
+  td{padding:5px 8px;border-bottom:1px solid var(--line)}
+  td.r{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  tr.gh td{color:var(--ghost);font-style:italic}
+  tr.tot td{font-weight:600;border-top:1px solid var(--line-2);border-bottom:0}
+  .delta{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:600;padding:1px 6px;
+    border-radius:9px;margin-left:8px;background:var(--warn-bg);color:var(--warn);font-style:normal}
+
+  .ghosthint{margin-top:10px;font-size:12.5px;color:var(--ink-3);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .ghosthint b{color:var(--ink)}
+
+  /* status */
+  .status{display:flex;align-items:center;gap:12px;padding:6px 14px;border-top:1px solid var(--line);
+    background:var(--rail);font-size:11.5px;color:var(--ink-3)}
+  .status .ok{color:var(--ok);font-weight:600}
+
+  /* toast */
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(16px);
+    background:var(--ink);color:var(--bg);border-radius:5px;padding:10px 16px;font-size:13.5px;
+    display:flex;align-items:center;gap:14px;box-shadow:0 14px 40px rgba(0,0,0,.32);
+    opacity:0;pointer-events:none;transition:opacity .14s ease,transform .14s ease;z-index:60}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+  .toast kbd{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.26);color:var(--bg)}
+  .toast button{color:var(--bg);text-decoration:underline;font-size:13px}
+
+  /* modal (the BEFORE behaviour) */
+  .scrim{position:fixed;inset:0;background:rgba(10,16,14,.45);display:none;align-items:center;justify-content:center;z-index:70}
+  .scrim.show{display:flex}
+  .modal{background:var(--surface);border:1px solid var(--line-2);border-radius:5px;box-shadow:var(--shadow);
+    padding:20px 26px;text-align:center;min-width:260px}
+  .modal p{margin:0 0 14px;font-weight:600}
+  .modal .opts{display:flex;gap:8px;justify-content:center}
+  .modal .opts button{padding:5px 16px;border:1px solid var(--line-2);border-radius:3px;font-weight:600}
+  .modal .opts button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+  /* palette */
+  .pscrim{position:fixed;inset:0;background:rgba(10,16,14,.5);backdrop-filter:blur(3px);
+    display:none;align-items:flex-start;justify-content:center;padding-top:11vh;z-index:80}
+  .pscrim.show{display:flex}
+  .pal{width:min(560px,92vw);background:var(--surface);border:1px solid var(--line-2);border-radius:6px;
+    box-shadow:0 22px 60px rgba(0,0,0,.4);overflow:hidden}
+  .pin{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line)}
+  .pin input{flex:1;border:0;background:transparent;color:var(--ink);font:inherit;font-size:15px;outline:none}
+  .plist{max-height:320px;overflow:auto;padding:6px}
+  .pi{display:flex;align-items:center;gap:11px;padding:8px 11px;border-radius:4px}
+  .pi.on{background:var(--accent-soft)}
+  .pi .pt{font-weight:500}
+  .pi.on .pt{color:var(--accent);font-weight:600}
+  .pi .al{font-family:var(--mono);font-size:11.5px;color:var(--ink-3)}
+  .pi .sc{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--ink-3);background:var(--sunk);padding:1px 7px;border-radius:3px}
+  .pfoot{display:flex;gap:16px;padding:8px 15px;border-top:1px solid var(--line);color:var(--ink-3);font-size:11px;flex-wrap:wrap}
+
+  /* annotations */
+  .notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:12px;margin-top:20px}
+  .note{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:4px;padding:14px 16px}
+  .note h3{margin:0 0 6px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .note .tag{font-family:var(--mono);font-size:10px;color:var(--accent);background:var(--accent-soft);padding:1px 6px;border-radius:3px}
+  .note p{margin:0;font-size:13px;color:var(--ink-2)}
+  .note p+p{margin-top:6px}
+
+  .try{margin:26px 0 0;padding:16px 18px;background:var(--sunk);border-radius:4px;font-size:13.5px}
+  .try h3{margin:0 0 10px;font-size:13px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
+  .try ol{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+  .try li{color:var(--ink-2)}
+  .try b{color:var(--ink)}
+
+  @media (max-width:760px){.body{grid-template-columns:1fr}.rail{display:none}.frow{grid-template-columns:110px 1fr}}
+</style>
+
+<div class="page">
+  <div class="head">
+    <p class="eyebrow">Comhard Books · interaction mockup</p>
+    <h1>Six keystrokes</h1>
+    <p class="sub">The same Sales voucher, entered two ways. Every Tally key is unchanged — F8, Alt+G,
+      Ctrl+A, Backspace-to-previous all still mean exactly what they meant. Only what the
+      <em>fields accept</em> changed.</p>
+  </div>
+
+  <div class="switchbar">
+    <div class="seg" id="seg">
+      <button data-m="before">Today</button>
+      <button data-m="after" class="on">Proposed</button>
+    </div>
+    <p class="note" id="modeNote"><b>Proposed:</b> ghost recall, arithmetic in amount fields, accept with
+      no modal. Type in the fields below — it really works.</p>
+    <button class="pill" id="themeBtn" title="Light / dark"><span id="themeIcon">◐</span></button>
+  </div>
+
+  <div class="app">
+    <div class="top">
+      <span class="brand">Comhard Books</span>
+      <span class="mi"><u>K</u>: Company</span>
+      <span class="mi"><u>D</u>: Day Book</span>
+      <span class="spacer"></span>
+      <button class="pill" id="palBtn">⌕ Go To <kbd>Alt+G</kbd></button>
+    </div>
+
+    <div class="body">
+      <div class="main">
+        <div class="vhead">
+          <span class="t">Accounting Voucher Creation</span>
+          <span class="d">Sales · 2 Aug 2026, Sunday</span>
+          <span class="vno">INV/26-27/041</span>
+        </div>
+
+        <div class="frow">
+          <label for="party">Party A/c name</label>
+          <div class="fv">
+            <input id="party" autocomplete="off" placeholder="type “ram” or “rt”…">
+            <div class="ac" id="ac" hidden></div>
+          </div>
+        </div>
+
+        <div class="frow">
+          <label for="sales">Sales ledger</label>
+          <div class="fv"><input id="sales" autocomplete="off" value="Sales @ 18%"></div>
+        </div>
+
+        <div class="frow">
+          <label for="amt">Amount</label>
+          <div class="fv">
+            <input id="amt" class="amt" autocomplete="off" placeholder="1250*18/100">
+            <span class="preview" id="prev"></span>
+          </div>
+        </div>
+
+        <table id="grid">
+          <thead>
+            <tr><th>Item</th><th class="r">Qty</th><th class="r">Rate</th><th class="r">Amount</th></tr>
+          </thead>
+          <tbody id="rows">
+            <tr><td colspan="4" style="color:var(--ink-3);padding:14px 8px">No lines yet.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="ghosthint" id="ghosthint" hidden></div>
+      </div>
+
+      <aside class="rail" id="rail"></aside>
+    </div>
+
+    <div class="status">
+      <span id="crumb">Gateway › Vouchers › Sales</span>
+      <span class="spacer"></span>
+      <span id="statusRight" class="ok">local-first · saved on disk</span>
+    </div>
+  </div>
+
+  <div class="notes" id="notes"></div>
+
+  <div class="try">
+    <h3>Try it</h3>
+    <ol>
+      <li>Type <b>ram</b> (or the alias <b>rt</b>) in Party — last month's voucher appears as ghost rows.
+        Press <b>Ctrl+Space</b> to materialise it.</li>
+      <li>In Amount, type <b>1250*18/100</b> — or <b>1.5L</b>, or <b>25k</b>. Watch the live preview.</li>
+      <li>Press <b>Ctrl+A</b> to accept. Compare "Today" vs "Proposed".</li>
+      <li>Press <b>Alt+G</b> (or click Go To) to see the palette with user aliases.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="scrim" id="scrim"><div class="modal">
+  <p>Accept ?</p><div class="opts"><button class="on" id="mYes">Yes</button><button id="mNo">No</button></div>
+</div></div>
+
+<div class="pscrim" id="pscrim">
+  <div class="pal" role="dialog" aria-label="Go To">
+    <div class="pin"><span>⌕</span><input id="pq" placeholder="Go To — report, voucher, ledger…  try “rt” or “g1”" autocomplete="off"></div>
+    <div class="plist" id="plist"></div>
+    <div class="pfoot"><span><kbd>↑↓</kbd> move</span><span><kbd>↵</kbd> open</span><span><kbd>esc</kbd> close</span>
+      <span style="margin-left:auto">aliases beat fuzzy — always</span></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var $=function(s){return document.querySelector(s)};
+  var root=document.documentElement;
+  var mode='after';
+
+  /* ---------- last month's voucher for Ramesh Traders ---------- */
+  var GHOST=[
+    {item:'Ceiling Fan 1200mm', qty:20, rate:1850},
+    {item:'LED Panel 18W',      qty:50, rate:320}
+  ];
+  var PARTIES=[
+    {name:'Ramesh Traders', alias:'rt'},
+    {name:'Rampur Steel Co', alias:'rs'},
+    {name:'Novex Interiors', alias:'nx'}
+  ];
+
+  /* ---------- money ---------- */
+  function inr(n){
+    var s=(Math.round(n*100)/100).toFixed(2), p=s.split('.'), x=p[0], last3=x.slice(-3), rest=x.slice(0,-3);
+    if(rest) last3=','+last3;
+    return rest.replace(/\B(?=(\d{2})+(?!\d))/g,',')+last3+'.'+p[1];
+  }
+  /* superset amount parser: arithmetic + k / L / cr */
+  function parseAmount(raw){
+    var t=(raw||'').trim(); if(!t) return {ok:false,empty:true};
+    var m=/^([0-9.]+)\s*(k|l|lakh|cr|crore)$/i.exec(t);
+    if(m){
+      var base=parseFloat(m[1]); var u=m[2].toLowerCase();
+      var mult=u==='k'?1e3:(u==='cr'||u==='crore')?1e7:1e5;
+      return {ok:isFinite(base),val:base*mult,shorthand:true};
+    }
+    if(!/^[0-9+\-*/(). ]+$/.test(t)) return {ok:false};
+    try{
+      var v=Function('"use strict";return ('+t+')')();
+      if(typeof v!=='number'||!isFinite(v)) return {ok:false};
+      return {ok:true,val:v,expr:/[+\-*/()]/.test(t)};
+    }catch(e){ return {ok:false}; }
+  }
+
+  /* ---------- F-key rail ---------- */
+  var RAIL=[['F2','Date'],['F5','Payment'],['F6','Receipt'],['F8','Sales',1],['F9','Purchase'],
+            ['gap'],['Alt+C','New Ledger'],['Ctrl+Space','Use last',9],['gap'],['Ctrl+A','Accept']];
+  function drawRail(){
+    var r=$('#rail'); r.innerHTML='<div class="rl">Button Bar</div>';
+    RAIL.forEach(function(it){
+      if(it[0]==='gap'){r.insertAdjacentHTML('beforeend','<div style="height:8px"></div>');return;}
+      if(it[2]===9 && mode!=='after') return;           // ghost key only exists in the proposal
+      var b=document.createElement('button');
+      b.className='fk'+(it[2]===1?' hot':'')+(it[2]===9?' hot':'');
+      b.innerHTML='<kbd>'+it[0]+'</kbd><span class="lb">'+it[1]+'</span>';
+      r.appendChild(b);
+    });
+  }
+
+  /* ---------- ghost recall ---------- */
+  var ghostLive=false, materialised=false;
+  function renderRows(){
+    var tb=$('#rows'), hint=$('#ghosthint');
+    if(!ghostLive && !materialised){
+      tb.innerHTML='<tr><td colspan="4" style="color:var(--ink-3);padding:14px 8px">No lines yet.</td></tr>';
+      hint.hidden=true; return;
+    }
+    var html='', total=0;
+    GHOST.forEach(function(g,i){
+      var amt=g.qty*g.rate; total+=amt;
+      var delta=(materialised&&i===1)?'<span class="delta">rate ↑ was 300.00</span>':'';
+      html+='<tr class="'+(materialised?'':'gh')+'"><td>'+g.item+delta+'</td>'+
+            '<td class="r">'+g.qty+'</td><td class="r">'+inr(g.rate)+'</td><td class="r">'+inr(amt)+'</td></tr>';
+    });
+    var gst=total*0.18;
+    if(materialised){
+      html+='<tr><td colspan="3" style="color:var(--ink-2)">CGST 9% + SGST 9%</td><td class="r">'+inr(gst)+'</td></tr>';
+      html+='<tr class="tot"><td colspan="3">Invoice Total</td><td class="r">'+inr(total+gst)+'</td></tr>';
+    }
+    tb.innerHTML=html;
+    hint.hidden=false;
+    hint.innerHTML = materialised
+      ? '<span style="color:var(--ok)">✓</span> <b>Filled from 4 Jul 2026 invoice</b> — GST re-derived against today’s masters. One line changed; it’s badged.'
+      : 'Ghost of <b>INV/26-27/018 · 4 Jul 2026</b> — press <kbd>Ctrl+Space</kbd> to use it, or keep typing to ignore.';
+  }
+
+  /* ---------- party autocomplete ---------- */
+  var acIdx=0, acList=[];
+  function updateAc(){
+    var q=$('#party').value.trim().toLowerCase(), ac=$('#ac');
+    if(!q){ ac.hidden=true; acList=[]; ghostLive=false; materialised=false; renderRows(); return; }
+    acList=PARTIES.filter(function(p){
+      return p.name.toLowerCase().indexOf(q)===0 || p.alias===q ||
+             (mode==='after' && p.name.toLowerCase().indexOf(q)>-1);
+    });
+    if(!acList.length){ ac.hidden=true; ghostLive=false; renderRows(); return; }
+    acIdx=Math.min(acIdx,acList.length-1);
+    ac.hidden=false;
+    ac.innerHTML=acList.map(function(p,i){
+      return '<div class="'+(i===acIdx?'on':'')+'">'+p.name+
+             (mode==='after'?'<span class="alias">'+p.alias+'</span>':'')+'</div>';
+    }).join('');
+    // ghost only for Ramesh Traders, only in the proposal
+    ghostLive = (mode==='after' && acList[acIdx] && acList[acIdx].name==='Ramesh Traders' && !materialised);
+    renderRows();
+  }
+
+  $('#party').addEventListener('input',function(){acIdx=0;materialised=false;updateAc();});
+  $('#party').addEventListener('keydown',function(e){
+    if(!acList.length) return;
+    if(e.key==='ArrowDown'){e.preventDefault();acIdx=Math.min(acIdx+1,acList.length-1);updateAc();}
+    if(e.key==='ArrowUp'){e.preventDefault();acIdx=Math.max(acIdx-1,0);updateAc();}
+    if(e.key==='Enter'){e.preventDefault();this.value=acList[acIdx].name;$('#ac').hidden=true;
+      ghostLive=(mode==='after'&&this.value==='Ramesh Traders');renderRows();$('#sales').focus();}
+  });
+
+  /* ---------- amount superset ---------- */
+  $('#amt').addEventListener('input',function(){
+    var p=$('#prev');
+    if(mode!=='after'){ p.textContent=''; return; }
+    var r=parseAmount(this.value);
+    if(r.empty){p.textContent='';p.className='preview';return;}
+    if(!r.ok){p.textContent='—';p.className='preview bad';return;}
+    p.className='preview';
+    p.textContent = (r.expr||r.shorthand) ? '→ '+inr(r.val) : '';
+  });
+  $('#amt').addEventListener('blur',function(){
+    if(mode!=='after') return;
+    var r=parseAmount(this.value);
+    if(r.ok&&(r.expr||r.shorthand)){ this.value=inr(r.val); $('#prev').textContent=''; }
+  });
+
+  /* ---------- accept ---------- */
+  var toastT=null;
+  function showToast(html){
+    var t=$('#toast'); t.innerHTML=html; t.classList.add('show');
+    clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('show');},4200);
+  }
+  function doAccept(){
+    if(mode==='after'){
+      showToast('<span>Voucher <b>INV/26-27/041</b> saved</span><kbd>Ctrl+Z</kbd><button id="undoBtn">Undo</button>');
+      var u=$('#undoBtn'); if(u) u.onclick=function(){showToast('<span>Undone — voucher voided in the audit trail</span>');};
+      resetForm();
+    } else {
+      $('#scrim').classList.add('show');
+    }
+  }
+  $('#mYes').onclick=function(){$('#scrim').classList.remove('show');resetForm();showToast('<span>Voucher accepted</span>');};
+  $('#mNo').onclick=function(){$('#scrim').classList.remove('show');};
+  function resetForm(){
+    $('#party').value='';$('#amt').value='';$('#prev').textContent='';
+    ghostLive=false;materialised=false;$('#ac').hidden=true;acList=[];renderRows();$('#party').focus();
+  }
+
+  /* ---------- palette ---------- */
+  var CMDS=[
+    {t:'Ramesh Traders',   al:'rt', sc:'Ledger'},
+    {t:'GSTR-1',           al:'g1', sc:'Report'},
+    {t:'Sales Voucher',    al:'invoice', sc:'Create', k:'F8'},
+    {t:'Day Book',         al:'',   sc:'Report', k:'D'},
+    {t:'Balance Sheet',    al:'bs', sc:'Report'},
+    {t:'Bills Receivable', al:'recv', sc:'Report'},
+    {t:'Payment Voucher',  al:'kharcha', sc:'Create', k:'F5'},
+    {t:'Stock Summary',    al:'ss', sc:'Report'}
+  ];
+  var pIdx=0,pFiltered=CMDS;
+  function score(c,q){
+    if(!q) return 1;
+    if(mode==='after' && c.al && c.al.toLowerCase().indexOf(q)===0) return 1000;   // alias prefix wins
+    if(c.t.toLowerCase().indexOf(q)===0) return 500;
+    if(c.t.toLowerCase().indexOf(q)>-1) return 100;
+    if(mode==='after' && c.al && c.al.toLowerCase().indexOf(q)>-1) return 50;
+    return 0;
+  }
+  function renderPal(){
+    var q=$('#pq').value.trim().toLowerCase();
+    pFiltered=CMDS.map(function(c){return {c:c,s:score(c,q)};}).filter(function(x){return x.s>0;})
+      .sort(function(a,b){return b.s-a.s;}).map(function(x){return x.c;});
+    if(pIdx>=pFiltered.length) pIdx=0;
+    $('#plist').innerHTML = pFiltered.length ? pFiltered.map(function(c,i){
+      var alias=(mode==='after'&&c.al)?' <span class="al">('+c.al+')</span>':'';
+      var key=(mode==='after'&&c.k)?'<kbd>'+c.k+'</kbd>':'<span class="sc">'+c.sc+'</span>';
+      return '<div class="pi '+(i===pIdx?'on':'')+'"><span class="pt">'+c.t+'</span>'+alias+
+             '<span style="margin-left:auto">'+key+'</span></div>';
+    }).join('') : '<div class="pi"><span class="pt" style="color:var(--ink-3)">No matches</span></div>';
+  }
+  function openPal(){$('#pscrim').classList.add('show');$('#pq').value='';pIdx=0;renderPal();$('#pq').focus();}
+  function closePal(){$('#pscrim').classList.remove('show');}
+  $('#palBtn').onclick=openPal;
+  $('#pq').addEventListener('input',function(){pIdx=0;renderPal();});
+  $('#pscrim').addEventListener('click',function(e){if(e.target===this)closePal();});
+
+  /* ---------- global keys ---------- */
+  document.addEventListener('keydown',function(e){
+    var pOpen=$('#pscrim').classList.contains('show');
+    if(e.altKey && (e.key==='g'||e.key==='G'||e.code==='KeyG')){e.preventDefault();pOpen?closePal():openPal();return;}
+    if(pOpen){
+      if(e.key==='Escape'){closePal();}
+      else if(e.key==='ArrowDown'){e.preventDefault();pIdx=Math.min(pIdx+1,pFiltered.length-1);renderPal();}
+      else if(e.key==='ArrowUp'){e.preventDefault();pIdx=Math.max(pIdx-1,0);renderPal();}
+      else if(e.key==='Enter'){e.preventDefault();closePal();showToast('<span>Opened <b>'+(pFiltered[pIdx]?pFiltered[pIdx].t:'')+'</b></span>');}
+      return;
+    }
+    if((e.ctrlKey||e.metaKey) && e.code==='Space' && mode==='after' && ghostLive){
+      e.preventDefault(); materialised=true; ghostLive=false; renderRows(); return;
+    }
+    if((e.ctrlKey||e.metaKey) && (e.key==='a'||e.key==='A')){ e.preventDefault(); doAccept(); return; }
+  });
+
+  /* ---------- mode + theme ---------- */
+  var NOTES={
+    after:[
+      ['T1','Ghost recall','Type four letters of a party and last month’s voucher appears as ghost rows. <kbd>Ctrl+Space</kbd> materialises it — GST re-derived against today’s masters, and any line that changed is badged.'],
+      ['T2','Superset fields','<kbd>1250*18/100</kbd>, <kbd>1.5L</kbd>, <kbd>25k</kbd> all resolve, with a live preview before commit. A plain number behaves exactly as it always did.'],
+      ['T3','No accept modal','TallyPrime’s <kbd>Ctrl+A</kbd> accepts <em>without</em> a prompt — so removing it is more faithful, not less.'],
+      ['T5','Undo, not confirm','The change-log already stores the prior payload. Saved is final; <kbd>Ctrl+Z</kbd> voids it visibly in the audit trail.']
+    ],
+    before:[
+      ['—','Retype everything','Every line of a recurring vendor invoice is typed again from scratch, every month.'],
+      ['—','Numbers only','The amount field takes a number. Tax working happens in a calculator beside the keyboard.'],
+      ['—','Accept costs two keys','<kbd>Ctrl+A</kbd> then <kbd>Y</kbd> through a modal — on every single voucher.'],
+      ['—','Confirm, not undo','Dialogs tax every action to catch the rare mistake, and power users blind-click through them anyway.']
+    ]
+  };
+  function drawNotes(){
+    $('#notes').innerHTML = NOTES[mode].map(function(n){
+      return '<div class="note"><h3><span class="tag">'+n[0]+'</span>'+n[1]+'</h3><p>'+n[2]+'</p></div>';
+    }).join('');
+  }
+  function setMode(m){
+    mode=m;
+    Array.prototype.forEach.call(document.querySelectorAll('#seg button'),function(b){
+      b.classList.toggle('on',b.dataset.m===m);
+    });
+    $('#modeNote').innerHTML = m==='after'
+      ? '<b>Proposed:</b> ghost recall, arithmetic in amount fields, accept with no modal. Type in the fields below — it really works.'
+      : '<b>Today:</b> the same screen without those four changes. Every keystroke is identical in both modes.';
+    resetForm(); drawRail(); drawNotes(); $('#prev').textContent='';
+  }
+  $('#seg').addEventListener('click',function(e){var b=e.target.closest('button'); if(b) setMode(b.dataset.m);});
+
+  function isDark(){var t=root.getAttribute('data-theme');
+    return t? t==='dark' : matchMedia('(prefers-color-scheme:dark)').matches;}
+  function paint(){$('#themeIcon').textContent=isDark()?'☾':'☀';}
+  $('#themeBtn').onclick=function(){root.setAttribute('data-theme',isDark()?'light':'dark');paint();};
+
+  drawRail(); drawNotes(); renderRows(); paint();
+})();
+</script>
+
+</body></html>
